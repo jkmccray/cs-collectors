@@ -10,30 +10,42 @@
     <h4>Collectible</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CollectedDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CollectedDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Collection)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Collection.Name)
         </dd>
+        @if(Model.CollectibleTags.Count > 0)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.CollectibleTags)
+            </dt>
+            <dd class="col-sm-10">
+                @foreach (var item in Model.CollectibleTags)
+
+                    @Html.DisplayFor(model => item.Collectible.Name)
+                 }
+             </dd>
+        }
     </dl>
 </div>
 <div>

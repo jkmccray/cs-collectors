@@ -41,6 +41,7 @@ namespace Collectors.Controllers
 
             var collectible = await _context.Collectibles
                 .Include(c => c.Collection)
+                .Include(c => c.CollectibleTags)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (collectible == null)
             {
@@ -56,7 +57,8 @@ namespace Collectors.Controllers
             var user = await _userManager.GetUserAsync(HttpContext.User);
             var viewModel = new CollectibleCreateViewModel()
             {
-                Collections = await _context.Collections.Where(c => c.UserId == user.Id).ToListAsync()
+                Collections = await _context.Collections.Where(c => c.UserId == user.Id).ToListAsync(),
+                Tags = await _context.Tags.ToListAsync()
             };
             return View(viewModel);
         }
@@ -70,7 +72,7 @@ namespace Collectors.Controllers
         {
             if (ModelState.IsValid)
             {
-                viewModel.Collectible.CollectedDate = new DateTime();
+                viewModel.Collectible.CollectedDate = DateTime.Today;
                 _context.Add(viewModel.Collectible);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -81,16 +83,17 @@ namespace Collectors.Controllers
         // GET: Collectibles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            var viewModel = new CollectibeEditViewModel()
-            {
-                Collections = await _context.Collections.Where(c => c.User.Id == user.Id).ToListAsync()
-            };
-
             if (id == null)
             {
                 return NotFound();
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var viewModel = new CollectibleEditViewModel()
+            {
+                Collections = await _context.Collections.Where(c => c.User.Id == user.Id).ToListAsync(),
+                Tags = await _context.Tags.ToListAsync()
+            };
+
             var collectible = await _context.Collectibles.FindAsync(id);
             if (collectible == null)
             {
@@ -100,7 +103,6 @@ namespace Collectors.Controllers
             {
                 viewModel.Collectible = collectible;
             }
-            //ViewData["CollectionId"] = new SelectList(_context.Collections, "Id", "Name", collectible.CollectionId);
             return View(viewModel);
         }
 
@@ -109,9 +111,9 @@ namespace Collectors.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,CollectedDate,CollectionId")] Collectible collectible)
+        public async Task<IActionResult> Edit(int id, CollectibleEditViewModel viewModel)
         {
-            if (id != collectible.Id)
+            if (id != viewModel.Collectible.Id)
             {
                 return NotFound();
             }
@@ -120,12 +122,17 @@ namespace Collectors.Controllers
             {
                 try
                 {
-                    _context.Update(collectible);
+                    viewModel.Collectible.CollectibleTags = viewModel.SelectedTagIds.Select(t => new CollectibleTag()
+                    {
+                        TagId = t,
+                        CollectibleId = id
+                    }).ToList();
+                    _context.Update(viewModel.Collectible);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CollectibleExists(collectible.Id))
+                    if (!CollectibleExists(viewModel.Collectible.Id))
                     {
                         return NotFound();
                     }
@@ -136,8 +143,7 @@ namespace Collectors.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CollectionId"] = new SelectList(_context.Collections, "Id", "Name", collectible.CollectionId);
-            return View(collectible);
+            return View(viewModel);
         }
 
         // GET: Collectibles/Delete/5

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Collectors.Models
@@ -15,5 +16,6 @@ namespace Collectors.Models
         public DateTime CollectedDate { get; set; }
         public int CollectionId { get; set; }
         public Collection Collection { get; set; }
+        public virtual ICollection<CollectibleTag> CollectibleTags { get; set; }
     }
 }

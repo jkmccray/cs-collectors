@@ -17,5 +17,13 @@ namespace Collectors.Models.ViewModel
                 return Collections?.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
             }
         }
+        public List<Tag> Tags { get; set; }
+        public List<SelectListItem> TagOptions
+        {
+            get
+            {
+                return Tags?.Select(c => new SelectListItem(c.Text, c.Id.ToString())).ToList();
+            }
+        }
     }
 }

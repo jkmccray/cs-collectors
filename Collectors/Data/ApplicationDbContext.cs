@@ -18,6 +18,8 @@ namespace Collectors.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Collectible> Collectibles { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<CollectibleTag> CollectibleTags { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // the 'base' keyword references the parent class (similar to how the 'this' keyword references the current class)

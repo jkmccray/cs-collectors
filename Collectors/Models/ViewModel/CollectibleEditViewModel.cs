@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Collectors.Models.ViewModel
 {
-    public class CollectibeEditViewModel
+    public class CollectibleEditViewModel
     {
         public Collectible Collectible { get; set; }
         public List<Collection> Collections { get; set; }
@@ -18,5 +18,14 @@ namespace Collectors.Models.ViewModel
             }
         }
         public int SelectedCollectionId { get; set; }
+        public List<Tag> Tags { get; set; }
+        public List<SelectListItem> TagOptions
+        {
+            get
+            {
+                return Tags?.Select(c => new SelectListItem(c.Text, c.Id.ToString())).ToList();
+            }
+        }
+        public List<int> SelectedTagIds { get; set; }
     }
 }
